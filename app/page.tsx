@@ -16,6 +16,20 @@ import { CryptoCard } from "../components/crypto-card";
 import { WeatherCard } from "../components/weather-card";
 import { AdSense } from "@/components/adsense";
 
+interface Post {
+  _id: string;
+  title: string;
+  content: string;
+  excerpt: string;
+  category: string;
+  author: string;
+  image?: string;
+  createdAt: string;
+  updatedAt: string;
+  likes: number;
+  comments: number;
+}
+
 async function getPosts() {
   const res = await fetch("http://localhost:3000/api/posts", {
     cache: "no-store",
@@ -23,7 +37,9 @@ async function getPosts() {
   if (!res.ok) {
     throw new Error("Failed to fetch posts");
   }
-  return res.json();
+  const data = await res.json();
+  console.log("API Response Data:", data);
+  return data.posts as Post[];
 }
 
 export default async function Home() {
@@ -80,42 +96,62 @@ export default async function Home() {
                 {/* Featured Tab */}
                 <TabsContent value="featured" className="mt-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FeaturedArticle
-                      image="/placeholder.svg?height=400&width=600"
-                      category="Entertainment"
-                      title="Music Industry Faces New Copyright Challenges"
-                      excerpt="Recent court rulings reshape how artists and producers handle music rights in the digital age."
-                      author="Times Now"
-                      time="7h ago"
-                      likes={18}
-                      comments={5}
-                      featured
-                      href="/post/1"
-                    />
-                    <div className="grid grid-rows-2 gap-6">
-                      <FeaturedArticle
-                        image="/placeholder.svg?height=200&width=400"
-                        category="Sports"
-                        title="Cricket Star's Performance Raises Questions"
-                        excerpt="Recent test failures spark debate about selection criteria."
-                        author="Times Now"
-                        time="9h ago"
-                        likes={8}
-                        comments={12}
-                        href="/post/2"
-                      />
-                      <FeaturedArticle
-                        image="/placeholder.svg?height=200&width=400"
-                        category="Technology"
-                        title="Full Stack Development Trends in 2025"
-                        excerpt="New frameworks and approaches changing how developers build applications."
-                        author="Tech Insights"
-                        time="3h ago"
-                        likes={24}
-                        comments={7}
-                        href="/post/3"
-                      />
-                    </div>
+                    {posts.length > 0 ? (
+                      <>
+                        <FeaturedArticle
+                          image={
+                            posts[0].image ||
+                            "/placeholder.svg?height=400&width=600"
+                          }
+                          category={posts[0].category}
+                          title={posts[0].title}
+                          excerpt={posts[0].excerpt}
+                          author={posts[0].author}
+                          time={
+                            posts[0].createdAt
+                              ? new Date(
+                                  posts[0].createdAt
+                                ).toLocaleDateString()
+                              : "Recently"
+                          }
+                          likes={posts[0].likes || 0}
+                          comments={posts[0].comments || 0}
+                          featured
+                          href={`/post/${posts[0]._id}`}
+                        />
+                        <div className="grid grid-rows-2 gap-6">
+                          {posts.slice(1, 3).map((post, index) => (
+                            <FeaturedArticle
+                              key={post._id}
+                              image={
+                                post.image ||
+                                "/placeholder.svg?height=200&width=400"
+                              }
+                              category={post.category}
+                              title={post.title}
+                              excerpt={post.excerpt}
+                              author={post.author}
+                              time={
+                                post.createdAt
+                                  ? new Date(
+                                      post.createdAt
+                                    ).toLocaleDateString()
+                                  : "Recently"
+                              }
+                              likes={post.likes || 0}
+                              comments={post.comments || 0}
+                              href={`/post/${post._id}`}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="col-span-2 text-center py-8">
+                        <p className="text-muted-foreground">
+                          No posts available
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   {/* In-feed Ad */}
@@ -124,24 +160,24 @@ export default async function Home() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                    {Array.from({ length: 3 }).map((_, i) => (
+                    {posts.slice(3, 6).map((post) => (
                       <FeaturedArticle
-                        key={i}
-                        image="/placeholder.svg?height=200&width=300"
-                        category={["Business", "Health", "Travel"][i]}
-                        title={
-                          [
-                            "Market Trends Show Promising Growth",
-                            "New Health Guidelines Released",
-                            "Top Travel Destinations for 2025",
-                          ][i]
+                        key={post._id}
+                        image={
+                          post.image || "/placeholder.svg?height=200&width=300"
                         }
-                        excerpt="Latest updates and insights from industry experts."
-                        author="VlogVerse"
-                        time={`${i + 1}h ago`}
-                        likes={10 + i}
-                        comments={3 + i}
-                        href={`/post/${i + 4}`}
+                        category={post.category}
+                        title={post.title}
+                        excerpt={post.excerpt}
+                        author={post.author}
+                        time={
+                          post.createdAt
+                            ? new Date(post.createdAt).toLocaleDateString()
+                            : "Recently"
+                        }
+                        likes={post.likes || 0}
+                        comments={post.comments || 0}
+                        href={`/post/${post._id}`}
                       />
                     ))}
                   </div>
@@ -150,16 +186,17 @@ export default async function Home() {
                 {/* Trending Tab */}
                 <TabsContent value="trending">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                      <Link key={i} href={`/post/${i + 7}`}>
+                    {posts.slice(0, 6).map((post) => (
+                      <Link key={post._id} href={`/post/${post._id}`}>
                         <Card className="overflow-hidden">
                           <CardContent className="p-0">
                             <div className="relative h-48">
                               <Image
-                                src={`/placeholder.svg?height=200&width=300&text=Trending+${
-                                  i + 1
-                                }`}
-                                alt="Trending article"
+                                src={
+                                  post.image ||
+                                  `/placeholder.svg?height=200&width=300&text=${post.title}`
+                                }
+                                alt={post.title}
                                 fill
                                 className="object-cover"
                               />
@@ -174,12 +211,17 @@ export default async function Home() {
                             </div>
                             <div className="p-4">
                               <h3 className="font-semibold line-clamp-2">
-                                Trending Topic {i + 1}: What Everyone's Talking
-                                About
+                                {post.title}
                               </h3>
                               <div className="flex items-center justify-between mt-2 text-sm text-muted-foreground">
-                                <span>VlogVerse</span>
-                                <span>{i + 1}h ago</span>
+                                <span>{post.author}</span>
+                                <span>
+                                  {post.createdAt
+                                    ? new Date(
+                                        post.createdAt
+                                      ).toLocaleDateString()
+                                    : "Recently"}
+                                </span>
                               </div>
                             </div>
                           </CardContent>
@@ -193,49 +235,61 @@ export default async function Home() {
                 <TabsContent value="latest">
                   <div className="mt-6 space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <Link href="/post/13">
-                        <FeaturedArticle
-                          image="/placeholder.svg?height=400&width=600"
-                          category="Breaking"
-                          title="Just In: Major Announcement from Tech Giant"
-                          excerpt="Breaking news about a revolutionary product launch that could change the industry."
-                          author="Tech Reporter"
-                          time="1h ago"
-                          likes={5}
-                          comments={2}
-                          featured
-                        />
-                      </Link>
+                      {posts.length > 0 && (
+                        <Link href={`/post/${posts[0]._id}`}>
+                          <FeaturedArticle
+                            image={
+                              posts[0].image ||
+                              "/placeholder.svg?height=400&width=600"
+                            }
+                            category={posts[0].category}
+                            title={posts[0].title}
+                            excerpt={posts[0].excerpt}
+                            author={posts[0].author}
+                            time={
+                              posts[0].createdAt
+                                ? new Date(
+                                    posts[0].createdAt
+                                  ).toLocaleDateString()
+                                : "Recently"
+                            }
+                            likes={posts[0].likes || 0}
+                            comments={posts[0].comments || 0}
+                            featured
+                          />
+                        </Link>
+                      )}
                       <div className="space-y-6">
-                        {Array.from({ length: 3 }).map((_, i) => (
-                          <Link key={i} href={`/post/${i + 14}`}>
+                        {posts.slice(1, 4).map((post) => (
+                          <Link key={post._id} href={`/post/${post._id}`}>
                             <div className="flex gap-4 group">
                               <div className="relative h-24 w-24 rounded-md overflow-hidden flex-shrink-0">
                                 <Image
-                                  src={`/placeholder.svg?height=100&width=100&text=Latest+${
-                                    i + 1
-                                  }`}
-                                  alt={`Latest article ${i + 1}`}
+                                  src={
+                                    post.image ||
+                                    `/placeholder.svg?height=100&width=100&text=${post.title}`
+                                  }
+                                  alt={post.title}
                                   fill
                                   className="object-cover transition-transform duration-300 group-hover:scale-105"
                                 />
                               </div>
                               <div className="flex-1">
                                 <Badge variant="outline" className="mb-1">
-                                  {["Politics", "Science", "Culture"][i]}
+                                  {post.category}
                                 </Badge>
                                 <h3 className="font-medium line-clamp-2 group-hover:text-primary transition-colors">
-                                  {
-                                    [
-                                      "New Policy Changes Impact Global Markets",
-                                      "Scientists Discover Breakthrough Treatment",
-                                      "Cultural Festival Celebrates Diversity",
-                                    ][i]
-                                  }
+                                  {post.title}
                                 </h3>
                                 <div className="flex items-center justify-between mt-1 text-xs text-muted-foreground">
-                                  <span>VlogVerse</span>
-                                  <span>{i + 2}h ago</span>
+                                  <span>{post.author}</span>
+                                  <span>
+                                    {post.createdAt
+                                      ? new Date(
+                                          post.createdAt
+                                        ).toLocaleDateString()
+                                      : "Recently"}
+                                  </span>
                                 </div>
                               </div>
                             </div>

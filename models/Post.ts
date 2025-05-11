@@ -49,4 +49,10 @@ const PostSchema = new mongoose.Schema({
     },
 });
 
+// Add indexes for better query performance
+PostSchema.index({ category: 1 });
+PostSchema.index({ featured: 1 });
+PostSchema.index({ createdAt: -1 });
+PostSchema.index({ likes: -1 });
+
 export default mongoose.models.Post || mongoose.model('Post', PostSchema);

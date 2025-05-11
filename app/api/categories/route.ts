@@ -1,35 +1,18 @@
 import { NextResponse } from 'next/server';
-
-// Mock categories database - In a real app, this would be in a database
-const categories = [
-    { id: '1', name: 'Technology', slug: 'technology', description: 'Tech news and updates' },
-    { id: '2', name: 'Entertainment', slug: 'entertainment', description: 'Entertainment news and reviews' },
-    { id: '3', name: 'Sports', slug: 'sports', description: 'Sports news and analysis' },
-    { id: '4', name: 'Business', slug: 'business', description: 'Business and finance news' },
-    { id: '5', name: 'Health', slug: 'health', description: 'Health and wellness news' }
-];
+import connectDB from '@/lib/mongodb';
+import Category from '@/models/Category';
 
 // GET all categories
-export async function GET(request: Request) {
+export async function GET() {
     try {
-        const { searchParams } = new URL(request.url);
-        const search = searchParams.get('search');
-
-        let filteredCategories = [...categories];
-
-        if (search) {
-            const searchLower = search.toLowerCase();
-            filteredCategories = filteredCategories.filter(category =>
-                category.name.toLowerCase().includes(searchLower) ||
-                category.description.toLowerCase().includes(searchLower)
-            );
-        }
-
-        return NextResponse.json(filteredCategories);
+        await connectDB();
+        const categories = await Category.find({ isActive: true }).sort({ name: 1 });
+        return NextResponse.json(categories);
     } catch (error) {
+        console.error('Error fetching categories:', error);
         return NextResponse.json(
-            { error: 'Invalid request' },
-            { status: 400 }
+            { error: 'Failed to fetch categories' },
+            { status: 500 }
         );
     }
 }
@@ -37,39 +20,30 @@ export async function GET(request: Request) {
 // POST new category
 export async function POST(request: Request) {
     try {
+        await connectDB();
         const body = await request.json();
-        const { name, description } = body;
 
-        if (!name) {
+        // Validate required fields
+        if (!body.name || !body.slug) {
             return NextResponse.json(
-                { error: 'Category name is required' },
+                { error: 'Name and slug are required' },
                 { status: 400 }
             );
         }
 
-        // Check if category already exists
-        if (categories.some(cat => cat.name.toLowerCase() === name.toLowerCase())) {
-            return NextResponse.json(
-                { error: 'Category already exists' },
-                { status: 400 }
-            );
-        }
+        const newCategory = new Category({
+            ...body,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        });
 
-        const newCategory = {
-            id: Date.now().toString(),
-            name,
-            slug: name.toLowerCase().replace(/\s+/g, '-'),
-            description: description || ''
-        };
-
-        // In a real application, you would save this to a database
-        categories.push(newCategory);
-
+        await newCategory.save();
         return NextResponse.json(newCategory, { status: 201 });
     } catch (error) {
+        console.error('Error creating category:', error);
         return NextResponse.json(
-            { error: 'Invalid request' },
-            { status: 400 }
+            { error: 'Failed to create category' },
+            { status: 500 }
         );
     }
 }
@@ -77,50 +51,36 @@ export async function POST(request: Request) {
 // PUT update category
 export async function PUT(request: Request) {
     try {
+        await connectDB();
         const body = await request.json();
-        const { id, name, description } = body;
+        const { id } = body;
 
-        if (!id || !name) {
+        if (!id) {
             return NextResponse.json(
-                { error: 'Category ID and name are required' },
+                { error: 'Category ID is required' },
                 { status: 400 }
             );
         }
 
-        const categoryIndex = categories.findIndex(cat => cat.id === id);
+        const updatedCategory = await Category.findByIdAndUpdate(
+            id,
+            { ...body, updatedAt: new Date() },
+            { new: true, runValidators: true }
+        );
 
-        if (categoryIndex === -1) {
+        if (!updatedCategory) {
             return NextResponse.json(
                 { error: 'Category not found' },
                 { status: 404 }
             );
         }
 
-        // Check if new name conflicts with existing category
-        if (categories.some(cat =>
-            cat.id !== id && cat.name.toLowerCase() === name.toLowerCase()
-        )) {
-            return NextResponse.json(
-                { error: 'Category name already exists' },
-                { status: 400 }
-            );
-        }
-
-        const updatedCategory = {
-            ...categories[categoryIndex],
-            name,
-            slug: name.toLowerCase().replace(/\s+/g, '-'),
-            description: description || categories[categoryIndex].description
-        };
-
-        // In a real application, you would update this in a database
-        categories[categoryIndex] = updatedCategory;
-
         return NextResponse.json(updatedCategory);
     } catch (error) {
+        console.error('Error updating category:', error);
         return NextResponse.json(
-            { error: 'Invalid request' },
-            { status: 400 }
+            { error: 'Failed to update category' },
+            { status: 500 }
         );
     }
 }
@@ -128,6 +88,7 @@ export async function PUT(request: Request) {
 // DELETE category
 export async function DELETE(request: Request) {
     try {
+        await connectDB();
         const { searchParams } = new URL(request.url);
         const id = searchParams.get('id');
 
@@ -138,23 +99,21 @@ export async function DELETE(request: Request) {
             );
         }
 
-        const categoryIndex = categories.findIndex(cat => cat.id === id);
+        const deletedCategory = await Category.findByIdAndDelete(id);
 
-        if (categoryIndex === -1) {
+        if (!deletedCategory) {
             return NextResponse.json(
                 { error: 'Category not found' },
                 { status: 404 }
             );
         }
 
-        // In a real application, you would delete this from a database
-        categories.splice(categoryIndex, 1);
-
         return NextResponse.json({ message: 'Category deleted successfully' });
     } catch (error) {
+        console.error('Error deleting category:', error);
         return NextResponse.json(
-            { error: 'Invalid request' },
-            { status: 400 }
+            { error: 'Failed to delete category' },
+            { status: 500 }
         );
     }
 }
