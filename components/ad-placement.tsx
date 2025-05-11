@@ -1,29 +1,43 @@
-import { cn } from "@/lib/utils"
+"use client";
 
-interface AdPlacementProps {
-  type: "banner" | "sidebar" | "in-article"
-  className?: string
-}
+import { AdBanner } from "./adsense";
 
-export function AdPlacement({ type, className }: AdPlacementProps) {
-  const adSizes = {
-    banner: "h-[90px] md:h-[250px]", // Leaderboard/Billboard
-    sidebar: "h-[600px]", // Skyscraper
-    "in-article": "h-[250px]", // Medium Rectangle
-  }
+type AdPlacementProps = {
+  type: "banner" | "sidebar" | "in-article";
+};
+
+export const AdPlacement = ({ type }: AdPlacementProps) => {
+  const clientId = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || "";
+
+  // Different ad configurations based on type
+  const adConfig = {
+    banner: {
+      slot: process.env.NEXT_PUBLIC_ADSENSE_BANNER_SLOT || "",
+      format: "auto",
+      fullWidth: true,
+    },
+    sidebar: {
+      slot: process.env.NEXT_PUBLIC_ADSENSE_SIDEBAR_SLOT || "",
+      format: "auto",
+      fullWidth: false,
+    },
+    "in-article": {
+      slot: process.env.NEXT_PUBLIC_ADSENSE_IN_ARTICLE_SLOT || "",
+      format: "auto",
+      fullWidth: true,
+    },
+  };
+
+  const config = adConfig[type];
 
   return (
-    <div
-      className={cn(
-        "w-full bg-muted/20 border border-dashed border-muted flex items-center justify-center rounded-md overflow-hidden",
-        adSizes[type],
-        className,
-      )}
-    >
-      <div className="text-center text-muted-foreground">
-        <p className="text-sm font-medium">Advertisement</p>
-        <p className="text-xs">{type === "banner" ? "728×90 / 970×250" : type === "sidebar" ? "300×600" : "300×250"}</p>
-      </div>
+    <div className={`w-full ${type === "sidebar" ? "max-w-[300px]" : ""}`}>
+      <AdBanner
+        dataAdSlot={config.slot}
+        dataAdFormat={config.format}
+        dataFullWidthResponsive={config.fullWidth}
+        clientId={clientId}
+      />
     </div>
-  )
-}
+  );
+};
