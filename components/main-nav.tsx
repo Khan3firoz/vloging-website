@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { cn } from "@/lib/utils"
+import { cn } from "../lib/utils";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -52,37 +52,52 @@ const items = [
   },
 ]
 
-export function MainNav({ className }: React.HTMLAttributes<HTMLElement>) {
+interface MainNavProps extends React.HTMLAttributes<HTMLElement> {}
+
+export function MainNav({ className, ...props }: MainNavProps) {
   return (
-    <NavigationMenu className={cn("hidden md:flex", className)}>
-      <NavigationMenuList>
-        {items.map((item) => (
-          <NavigationMenuItem key={item.title}>
-            <Link href={item.href} legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>{item.title}</NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
-        ))}
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>More</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-              {[
-                { title: "Lifestyle", href: "/lifestyle", description: "Fashion, food, and more" },
-                { title: "Science", href: "/science", description: "Latest discoveries and research" },
-                { title: "Education", href: "/education", description: "Learning resources and tips" },
-                { title: "Finance", href: "/finance", description: "Markets, investing, and personal finance" },
-              ].map((item) => (
-                <ListItem key={item.title} title={item.title} href={item.href}>
-                  {item.description}
-                </ListItem>
-              ))}
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
-  )
+    <nav
+      className={cn("flex items-center space-x-4 lg:space-x-6", className)}
+      {...props}
+    >
+      <Link
+        href="/"
+        className="text-sm font-medium transition-colors hover:text-primary"
+      >
+        Home
+      </Link>
+      <Link
+        href="/category/tech"
+        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+      >
+        Tech
+      </Link>
+      <Link
+        href="/category/entertainment"
+        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+      >
+        Entertainment
+      </Link>
+      <Link
+        href="/category/sports"
+        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+      >
+        Sports
+      </Link>
+      <Link
+        href="/category/business"
+        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+      >
+        Business
+      </Link>
+      <Link
+        href="/category/health"
+        className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+      >
+        Health
+      </Link>
+    </nav>
+  );
 }
 
 const ListItem = React.forwardRef<React.ElementRef<"a">, React.ComponentPropsWithoutRef<"a"> & { title: string }>(
