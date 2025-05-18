@@ -15,7 +15,7 @@ import { RecommendedPosts } from "@/components/recommended-posts"
 // This would normally come from a database or API
 async function getPostData(id: string) {
   // Simulating API call delay
-  await new Promise((resolve) => setTimeout(resolve, 500))
+  await new Promise((resolve) => setTimeout(resolve, 500));
 
   // For demo purposes, we'll return mock data
   // In a real app, you would fetch this from your API
@@ -25,20 +25,20 @@ async function getPostData(id: string) {
       title: "Music Industry Faces New Copyright Challenges",
       content: `
         <p>Recent court rulings have reshaped how artists and producers handle music rights in the digital age. The landscape of music copyright has been dramatically altered following a series of high-profile cases.</p>
-        
+
         <h2>The Changing Landscape</h2>
         <p>For decades, the music industry operated under a set of assumptions about how copyright works. Artists would create music, labels would distribute it, and royalties would flow based on established formulas. But the digital revolution has upended this model.</p>
-        
+
         <p>Streaming platforms have introduced new complexities into how music is monetized and how rights are managed. Recent court decisions have highlighted the need for clearer guidelines and more transparent systems.</p>
-        
+
         <h2>Impact on Artists</h2>
         <p>Independent artists are particularly affected by these changes. Without the legal resources of major labels, they often struggle to navigate the increasingly complex world of music rights.</p>
-        
+
         <p>"It's becoming harder to know what rights you actually have," says independent musician Maya Rodriguez. "The rules seem to change every few months, and it's exhausting trying to keep up."</p>
-        
+
         <h2>Looking Forward</h2>
         <p>Industry experts suggest that blockchain technology might offer solutions to some of these challenges by creating immutable records of ownership and usage rights.</p>
-        
+
         <p>Until then, artists and producers are advised to work closely with legal experts who specialize in digital music rights to ensure they're protected in this rapidly evolving landscape.</p>
       `,
       category: "Entertainment",
@@ -54,23 +54,24 @@ async function getPostData(id: string) {
     },
     "2": {
       id: "2",
-      title: "Cricket Star's Performance Raises Questions About Selection Criteria",
+      title:
+        "Cricket Star's Performance Raises Questions About Selection Criteria",
       content: `
         <p>Recent test failures have sparked debate about selection criteria in professional cricket, with fans and analysts questioning the current approach to team building.</p>
-        
+
         <h2>The Controversy</h2>
         <p>Following a series of disappointing performances, cricket boards across several countries are facing increased scrutiny over their selection processes. Critics argue that the current system favors reputation over recent form.</p>
-        
+
         <p>The debate intensified after star player Ravindra Jadeja's unexpected failure in a crucial gauge test, which many believe should have implications for team selection in upcoming matches.</p>
-        
+
         <h2>Statistical Analysis</h2>
         <p>A deep dive into the numbers reveals some interesting patterns. Players who performed poorly in gauge tests have, on average, underperformed in subsequent matches by a margin of 23%.</p>
-        
+
         <p>This correlation has led many analysts to call for a more data-driven approach to team selection, with greater weight given to objective performance metrics rather than subjective assessments.</p>
-        
+
         <h2>The Way Forward</h2>
         <p>Several cricket boards have indicated they're reviewing their selection procedures in light of recent controversies. Some are considering implementing more transparent systems that clearly communicate the criteria used for team selection.</p>
-        
+
         <p>"The goal is to create a meritocracy where current form and fitness are the primary considerations," said one board member who requested anonymity. "We need to ensure fans have confidence in the selection process."</p>
       `,
       category: "Sports",
@@ -85,7 +86,7 @@ async function getPostData(id: string) {
       affiliateCategory: "general",
     },
     // Add more posts as needed
-  }
+  };
 
   // Default post for any ID not in our mock data
   const defaultPost = {
@@ -93,20 +94,20 @@ async function getPostData(id: string) {
     title: `Article ${id}: Comprehensive Analysis and Insights`,
     content: `
       <p>This in-depth article explores the latest developments and provides expert analysis on this important topic.</p>
-      
+
       <h2>Key Developments</h2>
       <p>Recent events have significantly changed how we understand this field. Experts from around the world have weighed in with their perspectives and insights.</p>
-      
+
       <p>The implications of these changes are far-reaching and will likely impact related industries and sectors in the coming months.</p>
-      
+
       <h2>Expert Opinions</h2>
       <p>Leading authorities in the field have shared their analysis of the situation. Dr. Jane Smith, a renowned researcher, notes that "these findings represent a paradigm shift in how we approach the fundamental questions in this area."</p>
-      
+
       <p>Industry veterans have also expressed optimism about the potential applications of these new insights, particularly in addressing long-standing challenges.</p>
-      
+
       <h2>Looking Ahead</h2>
       <p>As we move forward, it will be crucial to monitor how these developments evolve and what new opportunities they might create.</p>
-      
+
       <p>Stakeholders are advised to stay informed and consider how these changes might affect their strategic planning and decision-making processes.</p>
     `,
     category: id % 2 === 0 ? "Technology" : "Business",
@@ -119,26 +120,26 @@ async function getPostData(id: string) {
     comments: 20 + Number.parseInt(id) * 3,
     tags: ["Analysis", "Insights", "Trends", "Industry"],
     affiliateCategory: "general",
-  }
+  };
 
-  const post = posts[id] || defaultPost
-  return post
+  const post = posts[id] || defaultPost;
+  return post;
 }
 
 export default async function PostPage({ params }: { params: { id: string } }) {
-  const post = await getPostData(params.id)
+  const post = await getPostData(params.id);
 
   if (!post) {
-    notFound()
+    notFound();
   }
 
   // Format date
-  const publishDate = new Date(post.publishedAt)
+  const publishDate = new Date(post.publishedAt);
   const formattedDate = publishDate.toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
-  })
+  });
 
   return (
     <div className="container max-w-screen-xl mx-auto py-8">
@@ -160,13 +161,19 @@ export default async function PostPage({ params }: { params: { id: string } }) {
               <div className="flex items-center gap-2 flex-wrap">
                 <Badge variant="outline">{post.category}</Badge>
                 {post.tags.map((tag: string) => (
-                  <Badge key={tag} variant="secondary" className="bg-secondary/30">
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="bg-secondary/30"
+                  >
                     {tag}
                   </Badge>
                 ))}
               </div>
 
-              <h1 className="text-3xl md:text-4xl font-bold leading-tight">{post.title}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold leading-tight">
+                {post.title}
+              </h1>
 
               <div className="flex items-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
@@ -190,7 +197,13 @@ export default async function PostPage({ params }: { params: { id: string } }) {
           </div>
 
           <div className="relative aspect-video rounded-lg overflow-hidden">
-            <Image src={post.image || "/placeholder.svg"} alt={post.title} fill priority className="object-cover" />
+            <Image
+              src={post.image || "/placeholder.svg"}
+              alt={post.title}
+              fill
+              priority
+              className="object-cover"
+            />
           </div>
 
           {/* In-article Ad */}
@@ -211,8 +224,8 @@ export default async function PostPage({ params }: { params: { id: string } }) {
               <Badge variant="outline">Affiliate</Badge>
             </div>
             <p className="text-sm text-muted-foreground mb-4">
-              Products we think you'll love based on this article. We may earn a commission on purchases made through
-              these links.
+              Products we think you'll love based on this article. We may earn a
+              commission on purchases made through these links.
             </p>
             <AffiliateProducts category={post.affiliateCategory} />
           </div>
@@ -223,16 +236,28 @@ export default async function PostPage({ params }: { params: { id: string } }) {
           {/* Engagement Section */}
           <div className="flex items-center justify-between border-t border-b py-4">
             <div className="flex items-center gap-6">
-              <Button variant="ghost" size="sm" className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-2"
+              >
                 <ThumbsUp className="h-5 w-5" />
                 <span>{post.likes}</span>
               </Button>
-              <Button variant="ghost" size="sm" className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-2"
+              >
                 <MessageSquare className="h-5 w-5" />
                 <span>{post.comments}</span>
               </Button>
             </div>
-            <Button variant="outline" size="sm" className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
               <Share2 className="h-4 w-4" />
               Share
             </Button>
@@ -242,13 +267,19 @@ export default async function PostPage({ params }: { params: { id: string } }) {
           <div className="bg-muted/30 rounded-lg p-6">
             <div className="flex items-center gap-4">
               <div className="relative h-16 w-16 rounded-full overflow-hidden">
-                <Image src={post.authorImage || "/placeholder.svg"} alt={post.author} fill className="object-cover" />
+                <Image
+                  src={post.authorImage || "/placeholder.svg"}
+                  alt={post.author}
+                  fill
+                  className="object-cover"
+                />
               </div>
               <div>
                 <h3 className="text-lg font-semibold">{post.author}</h3>
                 <p className="text-sm text-muted-foreground">Staff Writer</p>
                 <p className="text-sm mt-1">
-                  Writer and analyst covering the latest trends in {post.category.toLowerCase()} and digital media.
+                  Writer and analyst covering the latest trends in{" "}
+                  {post.category.toLowerCase()} and digital media.
                 </p>
               </div>
             </div>
@@ -256,11 +287,15 @@ export default async function PostPage({ params }: { params: { id: string } }) {
 
           {/* Comments Section Placeholder */}
           <div className="border rounded-lg p-6">
-            <h3 className="text-xl font-semibold mb-4">Comments ({post.comments})</h3>
-            <p className="text-muted-foreground">Join the conversation! Sign in to comment.</p>
+            <h3 className="text-xl font-semibold mb-4">
+              Comments ({post.comments})
+            </h3>
+            {/* <p className="text-muted-foreground">
+              Join the conversation! Sign in to comment.
+            </p>
             <div className="mt-4">
               <Button>Sign In to Comment</Button>
-            </div>
+            </div> */}
           </div>
         </main>
 
@@ -273,7 +308,10 @@ export default async function PostPage({ params }: { params: { id: string } }) {
             <CardContent className="p-4">
               <h3 className="text-lg font-semibold mb-4">Related Posts</h3>
               <Suspense fallback={<RelatedPostsSkeleton />}>
-                <RelatedPosts category={post.category} currentPostId={post.id} />
+                <RelatedPosts
+                  category={post.category}
+                  currentPostId={post.id}
+                />
               </Suspense>
             </CardContent>
           </Card>
@@ -281,7 +319,9 @@ export default async function PostPage({ params }: { params: { id: string } }) {
           {/* Recommended Posts */}
           <Card>
             <CardContent className="p-4">
-              <h3 className="text-lg font-semibold mb-4">Recommended For You</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                Recommended For You
+              </h3>
               <Suspense fallback={<RelatedPostsSkeleton />}>
                 <RecommendedPosts currentPostId={post.id} />
               </Suspense>
@@ -289,11 +329,14 @@ export default async function PostPage({ params }: { params: { id: string } }) {
           </Card>
 
           {/* Featured Affiliate Product */}
-          <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-200 dark:border-amber-800">
+          <Card className="bg-gradient-to-br hidden from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-200 dark:border-amber-800">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold">Editor's Choice</h3>
-                <Badge variant="outline" className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100">
+                <Badge
+                  variant="outline"
+                  className="bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100"
+                >
                   Sponsored
                 </Badge>
               </div>
@@ -309,11 +352,15 @@ export default async function PostPage({ params }: { params: { id: string } }) {
                 <div>
                   <h4 className="font-medium">Premium Wireless Headphones</h4>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Experience studio-quality sound with the latest noise-cancelling technology.
+                    Experience studio-quality sound with the latest
+                    noise-cancelling technology.
                   </p>
                   <div className="flex items-center justify-between mt-3">
                     <span className="font-bold">$199.99</span>
-                    <Button size="sm" className="bg-amber-600 hover:bg-amber-700">
+                    <Button
+                      size="sm"
+                      className="bg-amber-600 hover:bg-amber-700"
+                    >
                       Shop Now
                     </Button>
                   </div>
@@ -339,7 +386,11 @@ export default async function PostPage({ params }: { params: { id: string } }) {
                   "Food",
                   "Fashion",
                 ].map((tag) => (
-                  <Badge key={tag} variant="outline" className="cursor-pointer hover:bg-secondary/20">
+                  <Badge
+                    key={tag}
+                    variant="outline"
+                    className="cursor-pointer hover:bg-secondary/20"
+                  >
                     {tag}
                   </Badge>
                 ))}
@@ -348,12 +399,20 @@ export default async function PostPage({ params }: { params: { id: string } }) {
           </Card>
 
           {/* Newsletter Signup */}
-          <Card>
+          <Card className="hidden">
             <CardContent className="p-4">
-              <h3 className="text-lg font-semibold mb-2">Subscribe to our Newsletter</h3>
-              <p className="text-sm text-muted-foreground mb-4">Get the latest updates directly to your inbox</p>
+              <h3 className="text-lg font-semibold mb-2">
+                Subscribe to our Newsletter
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Get the latest updates directly to your inbox
+              </p>
               <form className="space-y-2">
-                <input type="email" placeholder="Your email" className="w-full px-3 py-2 border rounded-md text-sm" />
+                <input
+                  type="email"
+                  placeholder="Your email"
+                  className="w-full px-3 py-2 border rounded-md text-sm"
+                />
                 <Button className="w-full">Subscribe</Button>
               </form>
             </CardContent>
@@ -364,7 +423,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
         </aside>
       </div>
     </div>
-  )
+  );
 }
 
 function RelatedPostsSkeleton() {

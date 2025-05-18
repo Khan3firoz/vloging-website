@@ -11,8 +11,6 @@ import { TrendingTopics } from "@/components/trending-topics";
 import { AdPlacement } from "@/components/ad-placement"
 import { AffiliateProducts } from "@/components/affiliate-products";
 import { StockMarketCard } from "../components/stock-market-card";
-import { MutualFundCard } from "../components/mutual-fund-card";
-import { CryptoCard } from "../components/crypto-card";
 import { WeatherCard } from "../components/weather-card";
 import { AdSense } from "@/components/adsense";
 
@@ -580,19 +578,6 @@ export default async function Home() {
                   <StockMarketCard />
                 </CardContent>
               </Card>
-
-              <Card>
-                <CardContent className="p-4">
-                  <MutualFundCard />
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-4">
-                  <CryptoCard />
-                </CardContent>
-              </Card>
-
               <Card>
                 <CardContent className="p-4">
                   <WeatherCard />
@@ -607,7 +592,7 @@ export default async function Home() {
               </Card>
 
               {/* Affiliate Marketing Sidebar */}
-              <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-200 dark:border-amber-800">
+              <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-200 dark:border-amber-800 hidden">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold">Editor's Choice</h3>

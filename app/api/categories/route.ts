@@ -117,3 +117,23 @@ export async function DELETE(request: Request) {
         );
     }
 }
+
+// Function to get categories from MongoDB
+export async function getMongoDBCategories() {
+    try {
+        await connectDB();
+
+        const categories = await Category.find({})
+            .sort({ name: 1 })
+            .lean();
+
+        console.log(categories, "categories");
+        return NextResponse.json(categories);
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        return NextResponse.json(
+            { error: 'Failed to fetch categories' },
+            { status: 500 }
+        );
+    }
+}

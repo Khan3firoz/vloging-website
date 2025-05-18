@@ -16,12 +16,12 @@ export function Header() {
           </Link>
         </div>
         <MainNav className="mx-6" />
-        <div className="ml-auto flex items-center space-x-4">
+        {/* <div className="ml-auto flex items-center space-x-4">
           <Button variant="outline" size="sm">
             Sign In
           </Button>
           <Button size="sm">Subscribe</Button>
-        </div>
+        </div> */}
       </div>
     </header>
   );

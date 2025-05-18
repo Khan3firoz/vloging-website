@@ -6,29 +6,33 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { AffiliateProducts } from "@/components/affiliate-products"
+import { getMongoDBCategories } from "@/app/api/categories/route";
 
 interface ViewAllPageProps {
   params: {
-    category: string
-  }
+    category: string;
+  };
 }
 
-export default function ViewAllPage({ params }: ViewAllPageProps) {
-  const { category } = params
+export default async function ViewAllPage({ params }: ViewAllPageProps) {
+  const { category } = params;
 
   // Validate category and get display name
-  const categoryMap: Record<string, string> = {
-    featured: "Featured",
-    trending: "Trending",
-    latest: "Latest",
-    tech: "Technology",
-    entertainment: "Entertainment",
-  }
-
-  const displayName = categoryMap[category]
+  // const categoryMap: Record<string, string> = {
+  //   featured: "Featured",
+  //   trending: "Trending",
+  //   latest: "Latest",
+  //   tech: "Technology",
+  //   entertainment: "Entertainment",
+  // }
+  const categoryMap = await getMongoDBCategories();
+  const categories = await categoryMap.json();
+  const displayName = categories.find(
+    (cat: { slug: string; name: string }) => cat.slug === category
+  )?.name;
 
   if (!displayName) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -61,10 +65,14 @@ export default function ViewAllPage({ params }: ViewAllPageProps) {
           {(category === "tech" || category === "entertainment") && (
             <div className="border rounded-lg p-6 bg-muted/10">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Top {displayName} Products</h3>
+                <h3 className="text-lg font-semibold">
+                  Top {displayName} Products
+                </h3>
                 <Badge variant="outline">Sponsored</Badge>
               </div>
-              <AffiliateProducts category={category === "tech" ? "tech" : "entertainment"} />
+              <AffiliateProducts
+                category={category === "tech" ? "tech" : "entertainment"}
+              />
             </div>
           )}
 
@@ -73,7 +81,9 @@ export default function ViewAllPage({ params }: ViewAllPageProps) {
             {Array.from({ length: 12 }).map((_, i) => (
               <Link key={i} href={`/post/${i + 10}`}>
                 <FeaturedArticle
-                  image={`/placeholder.svg?height=300&width=500&text=${displayName}+${i + 1}`}
+                  image={`/placeholder.svg?height=300&width=500&text=${displayName}+${
+                    i + 1
+                  }`}
                   category={getCategoryForIndex(category, i)}
                   title={getTitleForIndex(category, i)}
                   excerpt={`Comprehensive coverage and analysis of this ${displayName.toLowerCase()} topic with expert insights.`}
@@ -113,7 +123,10 @@ export default function ViewAllPage({ params }: ViewAllPageProps) {
                       id={`filter-${subcat}`}
                       className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                     />
-                    <label htmlFor={`filter-${subcat}`} className="ml-2 text-sm">
+                    <label
+                      htmlFor={`filter-${subcat}`}
+                      className="ml-2 text-sm"
+                    >
                       {subcat}
                     </label>
                   </div>
@@ -125,10 +138,15 @@ export default function ViewAllPage({ params }: ViewAllPageProps) {
           {/* Popular in Category */}
           <Card>
             <CardContent className="p-4">
-              <h3 className="text-lg font-semibold mb-4">Popular in {displayName}</h3>
+              <h3 className="text-lg font-semibold mb-4">
+                Popular in {displayName}
+              </h3>
               <div className="space-y-4">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="border-b pb-3 last:border-0 last:pb-0">
+                  <div
+                    key={i}
+                    className="border-b pb-3 last:border-0 last:pb-0"
+                  >
                     <Link href={`/post/${i + 20}`} className="group">
                       <Badge variant="outline" className="mb-1">
                         {getCategoryForIndex(category, i)}
@@ -152,7 +170,7 @@ export default function ViewAllPage({ params }: ViewAllPageProps) {
         </aside>
       </div>
     </div>
-  )
+  );
 }
 
 // Helper functions to generate content based on category
